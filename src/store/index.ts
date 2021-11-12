@@ -28,21 +28,17 @@ export default new Vuex.Store({
      * @param payload - 記事情報
      */
     addArticle(state, payload) {
-      console.dir(JSON.stringify(payload));
       state.articles.unshift(payload.article);
     },
 
-    // addComment(state, payload) {
-    //   return (payload: Comment) => {
-    //     const articleID = payload.articleId;
-    //     const hitArticles = [];
-    //     for (const article of state.articles) {
-    //       if (article.id === articleID) {
-    //         hitArticles.push(article);
-    //       }
-    //     }
-    //   };
-    // },
+    addComment(state, payload) {
+      const articleID = payload.comment.articleId;
+      for (const article of state.articles) {
+        if (article.id === articleID) {
+          article.commentList.push(payload.comment);
+        }
+      }
+    },
   }, //end mutations
   getters: {
     /**
