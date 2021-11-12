@@ -28,6 +28,7 @@ export default new Vuex.Store({
      * @param payload - 記事情報
      */
     addArticle(state, payload) {
+      console.dir(JSON.stringify(payload));
       state.articles.unshift(payload.article);
     },
 
