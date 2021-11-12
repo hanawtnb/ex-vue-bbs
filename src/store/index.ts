@@ -27,9 +27,10 @@ export default new Vuex.Store({
      * @param state - ステートオブジェクト
      * @param payload - 記事情報
      */
-    // addArticle(state, payload) {
-    //   state.articles.unshift(payload);
-    // },
+    addArticle(state, payload) {
+      state.articles.unshift(payload.article);
+    },
+
     // addComment(state, payload) {
     //   return (payload: Comment) => {
     //     const articleID = payload.articleId;
@@ -43,6 +44,11 @@ export default new Vuex.Store({
     // },
   }, //end mutations
   getters: {
+    /**
+     * 全ての記事を取得して返す.
+     * @param state - ステートオブジェクト。
+     * @returns - 全ての記事を返す。
+     */
     getArticles(state) {
       return state.articles;
     },
