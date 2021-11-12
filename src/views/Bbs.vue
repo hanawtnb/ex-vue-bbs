@@ -117,6 +117,8 @@ export default class BaseballTeamList extends Vue {
         articleId
       ),
     });
+    this.commentName = "";
+    this.commentContent = "";
   }
 
   deleteArticle(articleIndex: number): void {
