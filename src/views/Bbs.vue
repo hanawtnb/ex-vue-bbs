@@ -23,6 +23,14 @@
           <br />
           投稿者名：{{ article.name }} <br />
           投稿内容：{{ article.content }}
+          <br />
+          <button
+            class="waves-effect waves-light btn"
+            type="button"
+            v-on:click="deleteArticle(article.id)"
+          >
+            記事削除
+          </button>
 
           <div
             class="commentContent"
@@ -96,6 +104,8 @@ export default class BaseballTeamList extends Vue {
         []
       ),
     });
+    this.articleName = "";
+    this.articleContent = "";
   }
 
   addComment(articleId: number): void {
@@ -106,6 +116,12 @@ export default class BaseballTeamList extends Vue {
         this.commentContent,
         articleId
       ),
+    });
+  }
+
+  deleteArticle(articleIndex: number): void {
+    this["$store"].commit("deleteArticle", {
+      articleIndex: articleIndex,
     });
   }
 }

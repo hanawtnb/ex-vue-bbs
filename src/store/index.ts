@@ -39,6 +39,11 @@ export default new Vuex.Store({
         }
       }
     },
+
+    deleteArticle(state, payload) {
+      console.dir(JSON.stringify(payload));
+      state.articles.splice(payload, 1);
+    },
   }, //end mutations
   getters: {
     /**
