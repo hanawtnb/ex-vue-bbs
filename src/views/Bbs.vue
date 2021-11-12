@@ -19,7 +19,10 @@
       </div>
       <hr />
       <div class="articleContent">
-        <div v-for="article of currentArticleList" v-bind:key="article.id">
+        <div
+          v-for="(article, index) of currentArticleList"
+          v-bind:key="article.id"
+        >
           <br />
           投稿者名：{{ article.name }} <br />
           投稿内容：{{ article.content }}
@@ -27,7 +30,7 @@
           <button
             class="waves-effect waves-light btn"
             type="button"
-            v-on:click="deleteArticle(article.id)"
+            v-on:click="deleteArticle(index)"
           >
             記事削除
           </button>

@@ -35,7 +35,7 @@ export default new Vuex.Store({
       const articleID = payload.comment.articleId;
       for (const article of state.articles) {
         if (article.id === articleID) {
-          article.commentList.push(payload.comment);
+          article.commentList.unshift(payload.comment);
         }
       }
     },
