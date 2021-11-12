@@ -114,6 +114,7 @@ export default class BaseballTeamList extends Vue {
   addComment(articleId: number): void {
     this["$store"].commit("addComment", {
       comment: new Comment(
+        // 存在しないIDを入れている。
         -1,
         this.commentName,
         this.commentContent,
