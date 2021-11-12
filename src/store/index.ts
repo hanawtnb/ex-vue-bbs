@@ -6,6 +6,7 @@ import Vuex from "vuex";
 Vue.use(Vuex);
 
 export default new Vuex.Store({
+  strict: true,
   state: {
     articles: [
       new Article(3, "佐藤", "佐藤さんの記事", []),
@@ -18,7 +19,33 @@ export default new Vuex.Store({
       ]),
     ],
   }, // end state
-  mutations: {},
-  actions: {},
-  modules: {},
+  actions: {}, //end actions
+  mutations: {
+    /**
+     * 記事を追加する.
+     * @remarks 記事情報を受け取って記事一覧の最初に追加する.
+     * @param state - ステートオブジェクト
+     * @param payload - 記事情報
+     */
+    // addArticle(state, payload) {
+    //   state.articles.unshift(payload);
+    // },
+    // addComment(state, payload) {
+    //   return (payload: Comment) => {
+    //     const articleID = payload.articleId;
+    //     const hitArticles = [];
+    //     for (const article of state.articles) {
+    //       if (article.id === articleID) {
+    //         hitArticles.push(article);
+    //       }
+    //     }
+    //   };
+    // },
+  }, //end mutations
+  getters: {
+    getArticles(state) {
+      return state.articles;
+    },
+  }, //end getters
+  modules: {}, //end modules
 });

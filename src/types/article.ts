@@ -30,12 +30,12 @@ export class Article {
     this._name = name;
   }
 
-  public get comment(): string {
+  public get content(): string {
     return this._content;
   }
 
-  public set comment(comment: string) {
-    this._content = comment;
+  public set content(content: string) {
+    this._content = content;
   }
 
   public get commentList(): Array<Comment> {
