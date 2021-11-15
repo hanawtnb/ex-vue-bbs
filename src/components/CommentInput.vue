@@ -5,9 +5,6 @@
         <br />
         <div class="error">
           {{ errorMessageforCommentName }}
-          <div>
-            {{ errorMessageforCommentNameOver50 }}
-          </div>
         </div>
         名前：<input v-model="commentName" type="text" maxlength="50" />
         <br /><br />
@@ -45,8 +42,6 @@ export default class CommentInput extends Vue {
   private errorMessageforCommentName = "";
   // コメント内容が未入力の時のエラーメッセージ
   private errorMessageforCommentContent = "";
-  // 名前が５０文字以上の時のエラーメッセージ
-  private errorMessageforCommentNameOver50 = "";
 
   @Prop()
   private articleId!: number;
@@ -56,17 +51,21 @@ export default class CommentInput extends Vue {
     if (this.commentName == "") {
       this.errorMessageforCommentName = "名前を入力してください";
       hasErrors = true;
+    } else if (this.commentName.length >= 50) {
+      this.errorMessageforCommentName = "名前は50文字以下で入力してください";
+      hasErrors = true;
+      this.commentName = "";
+    } else {
+      this.errorMessageforCommentName = "";
     }
+
     if (this.commentContent == "") {
       this.errorMessageforCommentContent = "コメントを入力してください";
       hasErrors = true;
+    } else {
+      this.errorMessageforCommentContent = "";
     }
-    if (this.commentName.length > -50) {
-      this.errorMessageforCommentNameOver50 =
-        "名前は50文字以下で入力してください";
-      hasErrors = true;
-      this.commentName = "";
-    }
+
     if (hasErrors == true) {
       return;
     }

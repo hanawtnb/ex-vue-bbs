@@ -4,7 +4,6 @@
       <div class="articlePost">
         <div class="error">
           {{ errorMessageforArticleName }}
-          <div>{{ errorMessageforArticleNameOver50 }}</div>
         </div>
         投稿者名：<input
           type="text"
@@ -103,8 +102,6 @@ export default class BaseballTeamList extends Vue {
   private errorMessageforArticleName = "";
   // 投稿内容が未入力の時のエラーメッセージ
   private errorMessageforArticleContent = "";
-  // 投稿者名が50文字以上の時のエラーメッセージ
-  private errorMessageforArticleNameOver50 = "";
 
   created(): void {
     this.currentArticleList = this["$store"].getters.getArticles;
@@ -118,20 +115,25 @@ export default class BaseballTeamList extends Vue {
     if (this.articleName == "") {
       this.errorMessageforArticleName = "投稿者名を入力してください";
       hasErrors = true;
+    } else if (this.articleName.length >= 50) {
+      this.errorMessageforArticleName = "投稿者名は50文字以下で入力して下さい";
+      hasErrors = true;
+      this.articleName = "";
+    } else {
+      this.errorMessageforArticleName = "";
     }
+
     if (this.articleContent == "") {
       this.errorMessageforArticleContent = "投稿内容を入力してください";
       hasErrors = true;
+    } else {
+      this.errorMessageforArticleContent = "";
     }
-    if (this.articleName.length >= 50) {
-      this.errorMessageforArticleNameOver50 =
-        "投稿者名は50文字以下で入力して下さい";
-      hasErrors = true;
-      this.articleName = "";
-    }
+
     if (hasErrors == true) {
       return;
     }
+
     if (this.currentArticleList.length == 0) {
       articleId = 1;
     } else {
