@@ -18,7 +18,7 @@
         </button>
       </div>
       <hr />
-      <div class="articleContent">
+      <div class="card-panel teal lighten-5">
         <div
           v-for="(article, index) of currentArticleList"
           v-bind:key="article.id"
@@ -44,7 +44,7 @@
             コメント者名：{{ comment.name }} <br />
             コメント内容：{{ comment.content }}
           </div>
-          <div class="comment">
+          <div class="card-panel amber lighten-5">
             <br />
             名前：<input v-model="commentName" type="text" /> <br /><br />
             コメント：<textarea
@@ -126,6 +126,8 @@ export default class BaseballTeamList extends Vue {
   }
 
   deleteArticle(articleIndex: number): void {
+    console.log(articleIndex);
+
     this["$store"].commit("deleteArticle", {
       articleIndex: articleIndex,
     });
@@ -140,8 +142,5 @@ export default class BaseballTeamList extends Vue {
 .bbs {
   text-align: left;
   display: inline-block;
-}
-.comment {
-  background-color: rgb(223, 236, 232);
 }
 </style>
