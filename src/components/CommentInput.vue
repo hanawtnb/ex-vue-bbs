@@ -1,22 +1,24 @@
 <template>
   <div class="container">
-    <div class="card-panel amber lighten-5">
-      <br />
-      <div class="error">
-        {{ errorMessageforCommentName }}
-        <div v-if="commentName.length >= 50">
-          名前は50文字以下で入力してください
+    <div class="form">
+      <div class="card-panel amber lighten-5">
+        <br />
+        <div class="error">
+          {{ errorMessageforCommentName }}
+          <div>
+            {{ errorMessageforCommentNameOver50 }}
+          </div>
         </div>
+        名前：<input v-model="commentName" type="text" maxlength="50" />
+        <br /><br />
+        <div class="error">{{ errorMessageforCommentContent }}</div>
+        コメント：<textarea
+          v-model="commentContent"
+          cols="30"
+          rows="50"
+        ></textarea
+        ><br />
       </div>
-      名前：<input v-model="commentName" type="text" maxlength="50" />
-      <br /><br />
-      <div class="error">{{ errorMessageforCommentContent }}</div>
-      コメント：<textarea
-        v-model="commentContent"
-        cols="30"
-        rows="50"
-      ></textarea
-      ><br />
     </div>
 
     <button
@@ -43,27 +45,41 @@ export default class CommentInput extends Vue {
   private errorMessageforCommentName = "";
   // コメント内容が未入力の時のエラーメッセージ
   private errorMessageforCommentContent = "";
+  // 名前が５０文字以上の時のエラーメッセージ
+  private errorMessageforCommentNameOver50 = "";
 
   @Prop()
   private articleId!: number;
 
   addComment(): void {
+    let hasErrors = false;
     if (this.commentName == "") {
       this.errorMessageforCommentName = "名前を入力してください";
+      hasErrors = true;
     }
     if (this.commentContent == "") {
       this.errorMessageforCommentContent = "コメントを入力してください";
-    } else {
-      this["$store"].commit("addComment", {
-        comment: new Comment(
-          // 存在しないIDを入れている。
-          -1,
-          this.commentName,
-          this.commentContent,
-          this.articleId
-        ),
-      });
+      hasErrors = true;
     }
+    if (this.commentName.length > -50) {
+      this.errorMessageforCommentNameOver50 =
+        "名前は50文字以下で入力してください";
+      hasErrors = true;
+      this.commentName = "";
+    }
+    if (hasErrors == true) {
+      return;
+    }
+
+    this["$store"].commit("addComment", {
+      comment: new Comment(
+        // 存在しないIDを入れている。
+        -1,
+        this.commentName,
+        this.commentContent,
+        this.articleId
+      ),
+    });
     this.commentName = "";
     this.commentContent = "";
   }
@@ -73,5 +89,14 @@ export default class CommentInput extends Vue {
 <style scoped>
 .error {
   color: red;
+}
+
+.container {
+  text-align: center;
+}
+
+.form {
+  display: inline-block;
+  text-align: left;
 }
 </style>

@@ -4,9 +4,7 @@
       <div class="articlePost">
         <div class="error">
           {{ errorMessageforArticleName }}
-          <div v-if="articleName.length >= 50">
-            投稿者名は50文字以下で入力してください
-          </div>
+          <div>{{ errorMessageforArticleNameOver50 }}</div>
         </div>
         投稿者名：<input
           type="text"
@@ -20,52 +18,53 @@
           v-model="articleContent"
         ></textarea>
         <br />
+      </div>
+      <button
+        class="waves-effect waves-light btn"
+        type="button"
+        v-on:click="addArticle"
+      >
+        記事投稿
+      </button>
+    </div>
+    <div class="card-panel teal lighten-5">
+      <div
+        v-for="(article, index) of currentArticleList"
+        v-bind:key="article.id"
+      >
+        <br />
+        投稿者名：{{ article.name }} <br />
+        投稿内容：{{ article.content }}
+        <br />
         <button
           class="waves-effect waves-light btn"
           type="button"
-          v-on:click="addArticle"
+          v-on:click="deleteArticle(index)"
         >
-          記事投稿
+          記事削除
         </button>
-      </div>
-      <div class="card-panel teal lighten-5">
+
         <div
-          v-for="(article, index) of currentArticleList"
-          v-bind:key="article.id"
+          class="commentContent"
+          v-for="comment of article.commentList"
+          v-bind:key="comment.id"
         >
           <br />
-          投稿者名：{{ article.name }} <br />
-          投稿内容：{{ article.content }}
+          コメント者名：{{ comment.name }} <br />
+          コメント内容：{{ comment.content }}
+        </div>
+        <div class="card-panel amber lighten-5">
           <br />
-          <button
-            class="waves-effect waves-light btn"
-            type="button"
-            v-on:click="deleteArticle(index)"
-          >
-            記事削除
-          </button>
+          <CommentInput v-bind:article-id="article.id"></CommentInput>
 
-          <div
-            class="commentContent"
-            v-for="comment of article.commentList"
-            v-bind:key="comment.id"
-          >
-            <br />
-            コメント者名：{{ comment.name }} <br />
-            コメント内容：{{ comment.content }}
-          </div>
-          <div class="card-panel amber lighten-5">
-            <br />
-            <CommentInput v-bind:article-id="article.id"></CommentInput>
-
-            <!-- 名前：<input v-model="commentName" type="text" /> <br /><br />
+          <!-- 名前：<input v-model="commentName" type="text" /> <br /><br />
             コメント：<textarea
               v-model="commentContent"
               cols="30"
               rows="10"
             ></textarea
             ><br /> -->
-            <!-- 
+          <!-- 
             <button
               class="waves-effect waves-light btn"
               type="button"
@@ -73,12 +72,11 @@
             >
               コメント投稿
             </button> -->
-          </div>
         </div>
       </div>
-
-      <br />
     </div>
+
+    <br />
   </div>
 </template>
 
@@ -105,10 +103,8 @@ export default class BaseballTeamList extends Vue {
   private errorMessageforArticleName = "";
   // 投稿内容が未入力の時のエラーメッセージ
   private errorMessageforArticleContent = "";
-  // コメント者名が未入力の時のエラーメッセージ
-  private errorMessageforCommentName = "";
-  // コメント内容が未入力の時のエラーメッセージ
-  private errorMessageforCommentContent = "";
+  // 投稿者名が50文字以上の時のエラーメッセージ
+  private errorMessageforArticleNameOver50 = "";
 
   created(): void {
     this.currentArticleList = this["$store"].getters.getArticles;
@@ -117,22 +113,38 @@ export default class BaseballTeamList extends Vue {
    * 記事を追加する.
    */
   addArticle(): void {
+    let hasErrors = false;
+    let articleId = 0;
     if (this.articleName == "") {
       this.errorMessageforArticleName = "投稿者名を入力してください";
+      hasErrors = true;
     }
     if (this.articleContent == "") {
       this.errorMessageforArticleContent = "投稿内容を入力してください";
-    } else {
-      let articleId = this.currentArticleList[0].id + 1;
-      this["$store"].commit("addArticle", {
-        article: new Article(
-          articleId,
-          this.articleName,
-          this.articleContent,
-          []
-        ),
-      });
+      hasErrors = true;
     }
+    if (this.articleName.length >= 50) {
+      this.errorMessageforArticleNameOver50 =
+        "投稿者名は50文字以下で入力して下さい";
+      hasErrors = true;
+      this.articleName = "";
+    }
+    if (hasErrors == true) {
+      return;
+    }
+    if (this.currentArticleList.length == 0) {
+      articleId = 1;
+    } else {
+      articleId = this.currentArticleList[0].id + 1;
+    }
+    this["$store"].commit("addArticle", {
+      article: new Article(
+        articleId,
+        this.articleName,
+        this.articleContent,
+        []
+      ),
+    });
     this.articleName = "";
     this.articleContent = "";
   }
@@ -154,7 +166,7 @@ export default class BaseballTeamList extends Vue {
   deleteArticle(articleIndex: number): void {
     console.log(articleIndex);
     this["$store"].commit("deleteArticle", {
-      articleIndex: articleIndex,
+      article: { articleIndex: articleIndex },
     });
   }
 }
@@ -163,6 +175,7 @@ export default class BaseballTeamList extends Vue {
 <style scoped>
 .container {
   text-align: center;
+  padding: 20px;
 }
 .bbs {
   text-align: left;

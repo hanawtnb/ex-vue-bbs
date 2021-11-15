@@ -50,7 +50,7 @@ export default new Vuex.Store({
      */
     deleteArticle(state, payload) {
       console.dir(JSON.stringify(payload));
-      state.articles.splice(payload, 1);
+      state.articles.splice(payload.article.articleIndex, 1);
     },
   }, //end mutations
   getters: {
