@@ -2,10 +2,21 @@
   <div class="container">
     <div class="bbs">
       <div class="articlePost">
-        投稿者名：<input type="text" v-model="articleName" /><br /><br />
+        <div class="error">
+          {{ errorMessageforArticleName }}
+          <div v-if="articleName.length >= 50">
+            投稿者名は50文字以下で入力してください
+          </div>
+        </div>
+        投稿者名：<input
+          type="text"
+          v-model="articleName"
+          maxlength="50"
+        /><br /><br />
+        <div class="error">{{ errorMessageforArticleContent }}</div>
         投稿内容：<textarea
           cols="30"
-          rows="10"
+          rows="50"
           v-model="articleContent"
         ></textarea>
         <br />
@@ -17,7 +28,6 @@
           記事投稿
         </button>
       </div>
-      <hr />
       <div class="card-panel teal lighten-5">
         <div
           v-for="(article, index) of currentArticleList"
@@ -46,39 +56,40 @@
           </div>
           <div class="card-panel amber lighten-5">
             <br />
-            名前：<input v-model="commentName" type="text" /> <br /><br />
+            <CommentInput v-bind:article-id="article.id"></CommentInput>
+
+            <!-- 名前：<input v-model="commentName" type="text" /> <br /><br />
             コメント：<textarea
               v-model="commentContent"
               cols="30"
               rows="10"
             ></textarea
-            ><br />
-
+            ><br /> -->
+            <!-- 
             <button
               class="waves-effect waves-light btn"
               type="button"
               v-on:click="addComment(article.id)"
             >
               コメント投稿
-            </button>
+            </button> -->
           </div>
-          <hr />
         </div>
       </div>
 
       <br />
-
-      <hr />
     </div>
   </div>
 </template>
 
 <script lang="ts">
 import { Article } from "@/types/article";
-import { Comment } from "@/types/comment";
 import { Component, Vue } from "vue-property-decorator";
+import CommentInput from "@/components/CommentInput.vue";
 
-@Component
+@Component({
+  components: { CommentInput },
+})
 export default class BaseballTeamList extends Vue {
   // 現在の記事一覧
   private currentArticleList = new Array<Article>();
@@ -90,6 +101,14 @@ export default class BaseballTeamList extends Vue {
   private commentName = "";
   //コメント内容
   private commentContent = "";
+  // 投稿者名が未入力の時のエラーメッセージ
+  private errorMessageforArticleName = "";
+  // 投稿内容が未入力の時のエラーメッセージ
+  private errorMessageforArticleContent = "";
+  // コメント者名が未入力の時のエラーメッセージ
+  private errorMessageforCommentName = "";
+  // コメント内容が未入力の時のエラーメッセージ
+  private errorMessageforCommentContent = "";
 
   created(): void {
     this.currentArticleList = this["$store"].getters.getArticles;
@@ -98,36 +117,42 @@ export default class BaseballTeamList extends Vue {
    * 記事を追加する.
    */
   addArticle(): void {
-    let articleId = this.currentArticleList[0].id + 1;
-    this["$store"].commit("addArticle", {
-      article: new Article(
-        articleId,
-        this.articleName,
-        this.articleContent,
-        []
-      ),
-    });
+    if (this.articleName == "") {
+      this.errorMessageforArticleName = "投稿者名を入力してください";
+    }
+    if (this.articleContent == "") {
+      this.errorMessageforArticleContent = "投稿内容を入力してください";
+    } else {
+      let articleId = this.currentArticleList[0].id + 1;
+      this["$store"].commit("addArticle", {
+        article: new Article(
+          articleId,
+          this.articleName,
+          this.articleContent,
+          []
+        ),
+      });
+    }
     this.articleName = "";
     this.articleContent = "";
   }
 
-  addComment(articleId: number): void {
-    this["$store"].commit("addComment", {
-      comment: new Comment(
-        // 存在しないIDを入れている。
-        -1,
-        this.commentName,
-        this.commentContent,
-        articleId
-      ),
-    });
-    this.commentName = "";
-    this.commentContent = "";
-  }
+  // addComment(articleId: number): void {
+  //   this["$store"].commit("addComment", {
+  //     comment: new Comment(
+  //       // 存在しないIDを入れている。
+  //       -1,
+  //       this.commentName,
+  //       this.commentContent,
+  //       articleId
+  //     ),
+  //   });
+  //   this.commentName = "";
+  //   this.commentContent = "";
+  // }
 
   deleteArticle(articleIndex: number): void {
     console.log(articleIndex);
-
     this["$store"].commit("deleteArticle", {
       articleIndex: articleIndex,
     });
@@ -142,5 +167,8 @@ export default class BaseballTeamList extends Vue {
 .bbs {
   text-align: left;
   display: inline-block;
+}
+.error {
+  color: red;
 }
 </style>
